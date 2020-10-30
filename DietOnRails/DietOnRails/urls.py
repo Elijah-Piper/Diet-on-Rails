@@ -20,5 +20,6 @@ import tracker
 
 urlpatterns = [
 	path('', include('tracker.urls')),
+	path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
 ]

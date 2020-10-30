@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		
+		<link rel="conanical" href="https://getbootstrap.com/docs/4.5/examples/cover/">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	
+		<!-- Bootstrap core CSS
+		<link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
+	-->
+
+		<title>{% block title %}Diet on Rails{% endblock %}</title>
+
+		<style>
+			.bd-placeholder-img {
+				font-size: 1.125rem;
+				text-anchor: middle;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+
+			@media (min-width: 768px) {
+				.bd-placeholder-img-lg {
+					font-size: 3.5rem;
+				}
+			}
+		</style>
+		<!-- Custom styles for this template -->
+		{% load static %}
+		<link href="{% static 'base.css' %}" rel="stylesheet" type="text/css">
+	</head>
+	<body class="text-center">
+		<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+			<header class="masthead mb-auto">
+				<div class="inner">
+					<h3 class="masthead-brand">Diet on Rails</h3>
+					<nav class="nav nav-masthead justify-content-center">
+						<a class="nav-link active" href="#">Home</a>
+						<a class="nav-link" href="#">Login</a>
+						<a class="nav-link" href="#">Create Account</a>
+					</nav>
+				</div>
+			</header>
+
+			<main role="main" class="inner cover">
+				{% block content %}
+					<h1 class="cover-heading">Cover your page.</h1>
+					<p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
+					<p class="lead">
+						<a href="#" class="btn btn-lg btn-secondary">Learn more</a>
+					</p>
+				{% endblock %}
+			</main>
+		</div>
+	</body>
+</html>
