@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Account{% endblock %}
+
+{% block content %}
+	<h2>Create a new account</h2>
+	<form method="post">
+		{% csrf_token %}
+		{% for field in form %}
+			<table>
+				<tr>
+					<td>
+						{{ field.label_tag }}
+					</td>
+					<td>
+						{{ field }}
+					</td>
+					<td>
+						{% if field.help_text %}
+							<small>{{ field.help_text }}</small>
+						{% endif %}
+					</td>
+					<td>
+						{% for error in field.errors %}
+							<p style="color: red">{{ error }}</p>
+						{% endfor %}
+					</td>
+				</tr>
+			</table>
+		{% endfor %}
+		<input type="submit" value="Create Account">
+	</form>
+{% endblock %}
