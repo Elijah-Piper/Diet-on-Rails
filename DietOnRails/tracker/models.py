@@ -29,6 +29,9 @@ class SavedFood(models.Model):
 	class Meta:
 		ordering = ['name']
 
+	def __str__(self):
+		return name
+
 
 class FoodGroup(models.Model):
 	"""
@@ -54,6 +57,9 @@ class FoodGroup(models.Model):
 	sugars = models.IntegerField()
 	protein = models.IntegerField()
 	potassium = models.IntegerField()
+
+	def __str__(self):
+		return name
 
 
 class FoodLog(FoodGroup):
