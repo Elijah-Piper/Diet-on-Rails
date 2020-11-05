@@ -3,12 +3,14 @@
 {% block title %}{{ block.super }} - Tracker{% endblock %}
 
 {% block content %}
-	<p>Welcome to the Diet on Rails Tracker!</p>
 
 	{% if user.is_authenticated %}
+		<!-- Information to be displayed if there is a user signed in -->
 		<p>You are signed in...</p>
 	{% else %}
-		<p>You are not signed in...</p>
+		<!-- Information to be displayed if a user is not signed in -->
+		<h3>Welcome to the Diet on Rails nutriional Tracker!</h3>
+		<p>To begin getting your diet on track, sign in or create and account.</p>
 	{% endif %}
 
 {% endblock %}
