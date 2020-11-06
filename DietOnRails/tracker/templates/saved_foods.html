@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Saved Foods{% endblock %}
+
+{% block content %}
+
+	<h3>Saved Foods:</h3>
+	{% if saved_foods %}
+		<p>Why is this showing up?</p>
+		{% for food in saved_foods %}
+			<ul style="list-style-type:none;">
+				<li>
+					<p>{{ food }}</p>
+					<small style="padding-left:10px">
+						{{ food.calories }} cal | {{ food.total_fat }}g fat | {{ food.total_carbs }}g carbs | {{ food.protein }}g protein }}
+					</small>
+				</li>
+			</ul>
+		{% endfor %}
+	{% else %}
+		<p>You have no saved foods yet...</p>
+	{% endif %}
+
+	<h3>Custom Food Groups:</h3>
+	{% if food_groups %}
+		{% for group in food_groups %}
+			<ul style="list-style-type:none;">
+				<li>
+					<p>{{ group }}</p>
+					<small style="padding-left:10px">
+						{{ group.calories }} cal | {{ group.total_fat }}g fat | {{ group.total_carbs }}g carbs | {{ group.protein }}g protein }}
+					</small>
+				</li>
+			</ul>
+		{% endfor %}
+	{% else %}
+		<P>You have no custom food groups yet...</P>
+	{% endif %}
+
+{% endblock %}
