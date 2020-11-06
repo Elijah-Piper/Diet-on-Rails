@@ -11,7 +11,7 @@ class SavedFood(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved_foods')
 
 	name = models.CharField(max_length=60)
-	brand_name = models.CharField(max_length=60)
+	brand_name = models.CharField(max_length=60, null=True)
 	serving_qty = models.FloatField()
 	serving_unit = models.CharField(max_length=20)
 	serving_weight = models.IntegerField()
