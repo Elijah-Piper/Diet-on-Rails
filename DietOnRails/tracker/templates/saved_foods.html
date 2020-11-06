@@ -4,7 +4,7 @@
 
 {% block content %}
 
-	<h3>Saved Foods:</h3>
+	<h3>Saved Foods: <a href="" style="color:lightblue;">+</a></h3>
 	{% if saved_foods %}
 		<p>Why is this showing up?</p>
 		{% for food in saved_foods %}
@@ -21,7 +21,7 @@
 		<p>You have no saved foods yet...</p>
 	{% endif %}
 
-	<h3>Custom Food Groups:</h3>
+	<h3>Custom Food Groups: <a href="" style="color:lightblue;">+</a></h3>
 	{% if food_groups %}
 		{% for group in food_groups %}
 			<ul style="list-style-type:none;">
