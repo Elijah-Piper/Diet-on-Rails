@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }} - Add Food{% endblock %}
+
+<style>
+	.foodtype {
+		color: blue;
+	}
+</style>
+
+{% block content %}
+	<form method="POST">
+		{% csrf_token %}
+		<table>
+			<tr>
+				{{ form.query.label_tag }}
+				{{ form.query }}
+				<button class="btn btn-unique btn-rounded btn-sm my-0" type="submit">Search</button>
+				{% for radio in form.food_type %}
+					| {{ radio }} 
+				{% endfor %}
+			</tr>
+		</table>
+	</form>
+
+	<!-- Search results -->
+	{% if results %}
+		<h2><strong>Results:</strong></h2>
+		{% for food, description in results.items %}
+			<table>
+				<!-- Top line of each search result -->
+				<tr>
+					<hr>
+					<td>
+						<img src="{{ description.image }}" alt="food img" style="width:80%; height:auto;">
+					</td>
+					{% if description.brand %}
+						<td style="padding-right: 15px">
+							<h3><strong>{{ description.brand }}</strong></h3>
+						</td>
+					{% endif %}
+					<td>
+						<h1>{{ food }}</h1>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p style="padding-top: 15px;">Serving size: {{ description.serving.qty }} {{ description.serving.unit }}</p>
+					</td>
+					<td>
+						<p>Energy: {{ description.Energy.qty }} {{ description.Energy.units }}</p>
+					</td>
+				</tr>
+
+			</table>
+		{% endfor %}
+	{% endif %}
+
+{% endblock %}

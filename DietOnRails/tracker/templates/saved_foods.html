@@ -4,7 +4,7 @@
 
 {% block content %}
 
-	<h3>Saved Foods: <a href="" style="color:lightblue;">+</a></h3>
+	<h3>Saved Foods: <a href="{% url 'add-food' %}" style="color:lightblue;">+</a></h3>
 	{% if saved_foods %}
 		<p>Why is this showing up?</p>
 		{% for food in saved_foods %}
