@@ -52,6 +52,7 @@
 			<ul class="nav navbar-nav">
 		  		<li><a href="#">Tracker</a></li>
 		    	<li><a href="{% url 'saved-foods' %}">Saved Foods</a></li>
+		    	<li><a href="{% url 'add-food' %}">Food Search</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 			  	{% if user.is_authenticated %}
