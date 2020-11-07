@@ -2,13 +2,28 @@
 
 {% block title %}{{ block.super }} - Add Food{% endblock %}
 
+{% block sidebar_left %}
+	<h3>Results Shortcuts:</h3>
+	{% if shortcut_ids %}
+		{% for id, display in shortcut_ids.items %}
+		<hr>
+			<a href="#{{ id }}">{{ display }}</a>
+		{% endfor %}
+	{% else %}
+		<p>There are no results.</p>
+	{% endif %}
+{% endblock %}
+
 {% block content %}
 	<form method="POST">
 		{% csrf_token %}
 		<table>
 			<tr>
 				{{ form.query.label_tag }}
-				{{ form.query }}
+				<!-- link for returning to top of page from bottom -->
+				<a id="top">
+					{{ form.query }}
+				</a>
 				<button class="btn btn-unique btn-rounded btn-sm my-0" type="submit">Search</button>
 				{% for radio in form.food_type %}
 					| {{ radio }} 
@@ -23,11 +38,15 @@
 		{% for food, description in results.items %}
 			<table class="table">
 				<!-- Top line of each search result -->
+				<td colspan=3>
+					<a class="btn btn-primary btn-lg btn-block" role="button" href="">Add to my saved foods</a>
 				<td rowspan=6>
-						<img src="{{ description.image.url }}" alt="food img" style="width:20vw; height:auto;">
+					<img src="{{ description.image.url }}" alt="food img" style="width:20vw; height:auto;">
 				</td>
 				<tr>
 					<hr>
+					<!-- Link desitnation for search result shortcuts -->
+					<a id="{{ food }}">
 					<td>
 						<h1>{{ food|title }}</h1>
 					</td>
@@ -40,6 +59,7 @@
 							<h4><strong>USDA Common Food</strong></h4>
 						</td>
 					{% endif %}
+					</a>
 				</tr>
 				<tr>
 					<td>
@@ -48,7 +68,6 @@
 					<td>
 						<p>Energy: {{ description.energy.qty }} {{ description.energy.units }}</p>
 					</td>
-					<td>
 				</tr>
 				<tr>
 					<td>
@@ -56,26 +75,31 @@
 						<p><strong>Carbs: {{ description.carbohydrate.qty }}{{ description.carbohydrate.units }}</strong></p>
 						<p>Fiber: {{ description.fiber.qty }}{{ description.fiber.units }}</p>
 						<p>Total Sugar: {{ description.sugar.qty }}{{ description.sugar.units }}</p>
-						{% if a_sugar in description %}
+						{% if description.a_sugar %}
 							<p>Added Sugar: {{ description.a_sugar.qty }}{{ description.a_sugar.units }}</p>
 						{% else %}
 							<p>Added Sugar: No data</p>
 						{% endif %}
 						<p><strong>Fat: {{ description.fat.qty }}{{ description.fat.units }}</strong></p>
-						{% if saturated in description %}
+						{% if description.saturated %}
 							<p>Saturated Fat: {{ description.saturated.qty }}{{ description.saturated.units }}</p>
 						{% else %}
 							<p>Saturated Fat: No data</p>
 						{% endif %}
-						{% if monounsaturated in description %}
+						{% if description.monounsaturated %}
 							<p>Monounsaturated Fat: {{ description.monounsaturated.qty }}{{ description.monounsaturated.units }}</p>
 						{% else %}
 							<p>Monounsaturated Fat: No data</p>
 						{% endif %}
-						{% if polyunsaturated in description %}
+						{% if description.polyunsaturated %}
 							<p>Polyunsaturated Fat: {{ description.polyunsaturated.qty }}{{ description.polyunsaturated.units }}</p>
 						{% else %}
 							<p>Polyunsaturated Fat: No data</p>
+						{% endif %}
+						{% if description.sodium %}
+							<p>Sodium: {{ description.sodium.qty }}{{ description.sodium.units }}</p>
+						{% else %}
+							<p>Sodium: No data</p>
 						{% endif %}
 					</td>
 					<td>
@@ -86,8 +110,11 @@
 							{% endif %}
 						{% endfor %}
 					</td>
+				</tr>
 			</table>
 		{% endfor %}
+		<!-- Return to top link at the bottom of the page -->
+		<a href="#top">Back to top</a>
 	{% endif %}
 
 {% endblock %}
