@@ -9,36 +9,36 @@ from .forms import CreateUserForm, AddSavedFoodForm
 
 # {attr_id: {name: ***, unit: ***}}
 NUTRITIONIX_USDA_NUTRIENT_MAPPING = {
-	'301': {'name': 'Calcium, Ca', 'unit': 'mg'},
-	'205': {'name': 'Carbohydrate,', 'unit': 'g'},
-	'601': {'name': 'Cholesterol', 'unit': 'mg'},
-	'208': {'name': 'Energy', 'unit': 'kcal'},
-	'606': {'name': 'Saturated Fat', 'unit': 'g'},
-	'645': {'name': 'Monounsaturated Fat', 'unit': 'g'},
-	'646': {'name': 'Polyunsaturated Fat', 'unit': 'g'},
-	'204': {'name': 'Total Fat', 'unit': 'g'},
-	'605': {'name': 'Trans Fat', 'unit': 'g'},
-	'303': {'name': 'Iron', 'unit': 'mg'},
-	'291': {'name': 'Fiber', 'unit': 'g'},
-	'306': {'name': 'Potassium', 'unit': 'mg'},
-	'307': {'name': 'Sodium', 'unit': 'mg'},
-	'203': {'name': 'Protein', 'unit': 'g'},
-	'269': {'name': 'Total Sugars', 'unit': 'g'},
-	'539': {'name': 'Added Sugars', 'unit': 'g'},
-	'324': {'name': 'Vitamin D', 'unit': 'IU'},
-	'221': {'name': 'Alcohol, ethyl', 'unit': 'g'},
-	'262': {'name': 'Caffeine', 'unit': 'mg'},
-	'322': {'name': 'Carotene, alpha', 'unit': 'Âµg'},
-	'321': {'name': 'Carotene, beta', 'unit': 'Âµg'},
-	'421': {'name': 'Choline', 'unit': 'mg'},
-	'417': {'name': 'Folate', 'unit': 'Âµg'},
-	'431': {'name': 'Folic Acid', 'unit': 'Âµg'},
-	'304': {'name': 'Magnesium', 'unit': 'mg'},
-	'315': {'name': 'Manganese', 'unit': 'mg'},
-	'305': {'name': 'Phosphorus', 'unit': 'mg'},
-	'317': {'name': 'Selenium', 'unit': 'Âµg'},
-	'309': {'name': 'Folate', 'unit': 'Âµg'},
-	'417': {'name': 'Zinc', 'unit': 'mg'},
+	'301': {'name': 'calcium', 'unit': 'mg'},
+	'205': {'name': 'carbohydrate', 'unit': 'g'},
+	'601': {'name': 'cholesterol', 'unit': 'mg'},
+	'208': {'name': 'energy', 'unit': 'kcal'},
+	'606': {'name': 'saturated', 'unit': 'g'},
+	'645': {'name': 'monounsaturated', 'unit': 'g'},
+	'646': {'name': 'polyunsaturated', 'unit': 'g'},
+	'204': {'name': 'fat', 'unit': 'g'},
+	'605': {'name': 'trans', 'unit': 'g'},
+	'303': {'name': 'iron', 'unit': 'mg'},
+	'291': {'name': 'fiber', 'unit': 'g'},
+	'306': {'name': 'potassium', 'unit': 'mg'},
+	'307': {'name': 'sodium', 'unit': 'mg'},
+	'203': {'name': 'protein', 'unit': 'g'},
+	'269': {'name': 'sugar', 'unit': 'g'},
+	'539': {'name': 'a_sugar', 'unit': 'g'},
+	'324': {'name': 'vitamin d', 'unit': 'IU'},
+	'221': {'name': 'alcohol', 'unit': 'g'},
+	'262': {'name': 'caffeine', 'unit': 'mg'},
+	'322': {'name': 'crotene a', 'unit': 'Âµg'},
+	'321': {'name': 'carotene b', 'unit': 'Âµg'},
+	'421': {'name': 'choline', 'unit': 'mg'},
+	'417': {'name': 'folate', 'unit': 'Âµg'},
+	'431': {'name': 'folic acid', 'unit': 'Âµg'},
+	'304': {'name': 'magnesium', 'unit': 'mg'},
+	'315': {'name': 'manganese', 'unit': 'mg'},
+	'305': {'name': 'phosphorus', 'unit': 'mg'},
+	'317': {'name': 'selenium', 'unit': 'Âµg'},
+	'309': {'name': 'folate', 'unit': 'Âµg'},
+	'417': {'name': 'zinc', 'unit': 'mg'},
 }
 
 def home(request):
@@ -95,6 +95,11 @@ def add_saved_food(request):
 				branded=search_type['branded']
 			)
 			context['results'] = results
+			context['display_exclusion'] = [
+				"protein", "carbohydrate", "fiber", "sugar", "a_sugar", "fat", 
+				"saturated", "monounsaturated", "polyunsaturated", "image", 
+				"serving", "weight", "brand", "energy", 
+			]
 	else:
 		form = AddSavedFoodForm()
 
@@ -139,8 +144,8 @@ def food_lookup(query, common, branded) -> list:
 			# The search results description to be displayed for the client
 			description = {
 				'serving': {'qty': item['serving_qty'], 'unit': item['serving_unit']},
-				'weight': item['serving_weight_grams'],
-				'image': item['photo']['thumb'],
+				'weight': {'qty': item['serving_weight_grams'], 'units': 'g'},
+				'image': {'url': item['photo']['thumb']},
 			}
 			try:
 				description['brand'] = item['brand_name']
