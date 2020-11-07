@@ -2,12 +2,6 @@
 
 {% block title %}{{ block.super }} - Add Food{% endblock %}
 
-<style>
-	.foodtype {
-		color: blue;
-	}
-</style>
-
 {% block content %}
 	<form method="POST">
 		{% csrf_token %}
@@ -27,31 +21,71 @@
 	{% if results %}
 		<h2><strong>Results:</strong></h2>
 		{% for food, description in results.items %}
-			<table>
+			<table class="table">
 				<!-- Top line of each search result -->
+				<td rowspan=6>
+						<img src="{{ description.image.url }}" alt="food img" style="width:20vw; height:auto;">
+				</td>
 				<tr>
 					<hr>
 					<td>
-						<img src="{{ description.image }}" alt="food img" style="width:80%; height:auto;">
+						<h1>{{ food|title }}</h1>
 					</td>
 					{% if description.brand %}
-						<td style="padding-right: 15px">
-							<h3><strong>{{ description.brand }}</strong></h3>
+						<td>
+							<h3><strong>{{ description.brand|title }}</strong></h3>
+						</td>
+					{% else %}
+						<td>
+							<h4><strong>USDA Common Food</strong></h4>
 						</td>
 					{% endif %}
-					<td>
-						<h1>{{ food }}</h1>
-					</td>
 				</tr>
 				<tr>
 					<td>
-						<p style="padding-top: 15px;">Serving size: {{ description.serving.qty }} {{ description.serving.unit }}</p>
+						<p>Serving size: {{ description.serving.qty }} {{ description.serving.unit }} ({{ description.weight.qty }}{{ description.weight.units }})</p>
 					</td>
 					<td>
-						<p>Energy: {{ description.Energy.qty }} {{ description.Energy.units }}</p>
+						<p>Energy: {{ description.energy.qty }} {{ description.energy.units }}</p>
 					</td>
+					<td>
 				</tr>
-
+				<tr>
+					<td>
+						<p><strong>Protein: {{ description.protein.qty }}{{ description.protein.units }}</strong></p>
+						<p><strong>Carbs: {{ description.carbohydrate.qty }}{{ description.carbohydrate.units }}</strong></p>
+						<p>Fiber: {{ description.fiber.qty }}{{ description.fiber.units }}</p>
+						<p>Total Sugar: {{ description.sugar.qty }}{{ description.sugar.units }}</p>
+						{% if a_sugar in description %}
+							<p>Added Sugar: {{ description.a_sugar.qty }}{{ description.a_sugar.units }}</p>
+						{% else %}
+							<p>Added Sugar: No data</p>
+						{% endif %}
+						<p><strong>Fat: {{ description.fat.qty }}{{ description.fat.units }}</strong></p>
+						{% if saturated in description %}
+							<p>Saturated Fat: {{ description.saturated.qty }}{{ description.saturated.units }}</p>
+						{% else %}
+							<p>Saturated Fat: No data</p>
+						{% endif %}
+						{% if monounsaturated in description %}
+							<p>Monounsaturated Fat: {{ description.monounsaturated.qty }}{{ description.monounsaturated.units }}</p>
+						{% else %}
+							<p>Monounsaturated Fat: No data</p>
+						{% endif %}
+						{% if polyunsaturated in description %}
+							<p>Polyunsaturated Fat: {{ description.polyunsaturated.qty }}{{ description.polyunsaturated.units }}</p>
+						{% else %}
+							<p>Polyunsaturated Fat: No data</p>
+						{% endif %}
+					</td>
+					<td>
+						{% for name, field in description.items %}
+							<!-- Excluding any fields already displayed -->
+							{% if name not in display_exclusion %}
+								<p>{{ name|title }}: {{ field.qty }}{{ field.units }}</p>
+							{% endif %}
+						{% endfor %}
+					</td>
 			</table>
 		{% endfor %}
 	{% endif %}
