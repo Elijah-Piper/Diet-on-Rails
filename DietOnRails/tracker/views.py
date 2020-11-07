@@ -98,8 +98,20 @@ def add_saved_food(request):
 			context['display_exclusion'] = [
 				"protein", "carbohydrate", "fiber", "sugar", "a_sugar", "fat", 
 				"saturated", "monounsaturated", "polyunsaturated", "image", 
-				"serving", "weight", "brand", "energy", 
+				"serving", "weight", "brand", "energy", 'sodium'
 			]
+			# For search result shortcuts in sidebar
+			shortcut_ids = {}
+			for food in results:
+				brand = results[food]['brand']
+				if brand:
+					pass
+				else:
+					brand = 'USDA C.F.'
+				display_text = f'{food} | {brand}'
+				shortcut_ids[food] = display_text
+				
+			context['shortcut_ids'] = shortcut_ids
 	else:
 		form = AddSavedFoodForm()
 
@@ -157,6 +169,8 @@ def food_lookup(query, common, branded) -> list:
 				try:
 					nutrient_name = NUTRITIONIX_USDA_NUTRIENT_MAPPING[attr_id]['name']
 					nutrient_units = NUTRITIONIX_USDA_NUTRIENT_MAPPING[attr_id]['unit']
+					if nutrient_units[0] == 'Â':
+						nutrient_units = nutrient_units[1:]
 
 					description[nutrient_name] = {
 						'qty': nutrient_qty, 
@@ -167,55 +181,3 @@ def food_lookup(query, common, branded) -> list:
 			results[item['food_name']] = description
 
 		return results
-
-
-### For testing API endpoints
-
-def item_lookup_nutrients(request):
-	request_data = {
-		"query": "%4 Great Value Cottage Cheese",
-		"timezone": "US/Mountain"
-	}
-	request_headers = {
-		'Content-Type': 'application/json',
-		'x-app-id': '8447a624',
-		'x-app-key': '3cab324652168f1b42f3df5abab15baf',
-		'x-remote-user-id': '0',
-	}
-	response = requests.post(
-		'https://trackapi.nutritionix.com/v2/natural/nutrients',
-		json=request_data,
-		headers=request_headers
-	)
-	json = response.json()
-	food_data = json['foods'][0]
-
-	#return render(request, 'item_lookup.html', {'food_data': food_data})
-
-def item_search(request, query):
-
-	request_data = {
-		'query': query,
-		'self': False,
-		'detailed': True
-	}
-	request_headers = {
-		'Content-Type': 'application/json',
-		'x-app-id': '8447a624',
-		'x-app-key': '3cab324652168f1b42f3df5abab15baf',
-		'x-remote-user-id': '0',
-	}
-	response = requests.get(
-		'https://trackapi.nutritionix.com/v2/search/instant',
-		params=request_data,
-		headers=request_headers,
-	)
-
-	json = response.json()
-	food_data = list()
-	if 'branded' in json:
-		food_data += json['branded']
-	if 'self' in json:
-		food_data += json['common']
-
-	print(food_data[0])
