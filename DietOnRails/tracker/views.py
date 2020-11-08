@@ -223,7 +223,7 @@ def food_search(request):
 
 	context['form'] = form
 
-	return render(request, 'add_saved_food.html', context=context)
+	return render(request, 'food_search.html', context=context)
 
 ### API endpoint interface (v2/search/instant) 
 def food_lookup(query, common, branded) -> list:
