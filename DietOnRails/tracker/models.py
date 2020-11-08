@@ -119,7 +119,10 @@ class SavedFood(models.Model):
 		ordering = ['name']
 
 	def __str__(self):
-		return name
+		if self.brand:
+			return f'{self.name} - {self.brand}'
+		else:
+			return f'{self.name} - USDA'
 
 
 class FoodGroup(models.Model):

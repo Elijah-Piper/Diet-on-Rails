@@ -4,7 +4,7 @@
 
 {% block content %}
 
-	<h3>Saved Foods: <a class="btn btn-primary" role="button" href="{% url 'add-food' %}">+</a></h3>
+	<h3>Saved Foods: <a class="btn btn-primary" role="button" href="{% url 'food-search' %}">+</a></h3>
 	{% if saved_foods %}
 		<p>Why is this showing up?</p>
 		{% for food in saved_foods %}
@@ -12,7 +12,7 @@
 				<li>
 					<p>{{ food }}</p>
 					<small style="padding-left:10px">
-						{{ food.calories }} cal | {{ food.total_fat }}g fat | {{ food.total_carbs }}g carbs | {{ food.protein }}g protein }}
+						{{ food.calories }} cal | {{ food.total_fat }}g fat | {{ food.total_carbs }}g carbs | {{ food.total_protein }}g protein
 					</small>
 				</li>
 			</ul>

@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
+import ast
 import requests
 import urllib
 
@@ -26,7 +27,7 @@ NUTRITIONIX_USDA_NUTRIENT_MAPPING = {
 	'291': {'name': 'fiber', 'unit': 'g', 'model_name': False},
 	'306': {'name': 'potassium', 'unit': 'mg', 'model_name': False},
 	'307': {'name': 'sodium', 'unit': 'mg', 'model_name': False},
-	'203': {'name': 'protein', 'unit': 'g', 'model_name': False},
+	'203': {'name': 'protein', 'unit': 'g', 'model_name': 'total_protein'},
 	'269': {'name': 'sugar', 'unit': 'g', 'model_name': 'total_sugar'},
 	'539': {'name': 'added sugar', 'unit': 'g', 'model_name': 'added_sugar'},
 	'324': {'name': 'vitamin d', 'unit': 'IU', 'model_name': 'vitamin_d'},
@@ -138,12 +139,37 @@ def add_food(request, food_query_string):
 	"""
 	# Decodes food nutrition information into dict from url parameter
 	food = urllib.parse.parse_qs(food_query_string)
-	"""
-	saved_food = SavedFood.objects.create(
-		name=food['name']['string']
-	)
-	"""
+	for field in food:
+		# Converts from list(string) to dictionary
+		food[field] = ast.literal_eval(''.join(food[field]))
 	
+	# Instantiation of new SavedFood instance
+	new_food = SavedFood(
+		user=request.user,
+		name=food['name']['string'],
+		brand=food['brand'],
+		serving_qty=food['serving']['qty'],
+		serving_unit=food['serving']['unit'],
+		serving_weight_g=food['weight']['qty'],
+		image_url=food['image']['url'],
+	)
+
+	# Population of nutrient info available for the new SavedFood instance
+	ignore_fields = ('name', 'serving', 'weight', 'image', 'brand')
+	for field in food:
+		if field not in ignore_fields:
+			# Finds the model field name that this nutrient corresponds to
+			attr_id = ''.join(tuple(
+				att_id 
+				for att_id in NUTRITIONIX_USDA_NUTRIENT_MAPPING
+				if field == NUTRITIONIX_USDA_NUTRIENT_MAPPING[att_id]['name']
+			))
+			field_name = NUTRITIONIX_USDA_NUTRIENT_MAPPING[attr_id]['model_name']
+			if not field_name:
+				field_name = NUTRITIONIX_USDA_NUTRIENT_MAPPING[attr_id]['name']
+			setattr(new_food, field_name, food[field]['qty'])
+
+	new_food.save()
 
 	return redirect('saved-foods')
 
