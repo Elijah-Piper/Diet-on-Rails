@@ -128,6 +128,11 @@ def saved_foods(request):
 	context = dict()
 	context['saved_foods'] = request.user.saved_foods.all()
 	context['food_groups'] = request.user.grouped_foods.all()
+	context['display_exclusion'] = [
+		"total_protein", "total_carbs", "total_fat", "image_url", "serving_qty", 
+		"serving_unit", "serving_weight_g" , "brand", "calories", 'name', "id",
+		"user",
+	]
 
 	return render(request, 'saved_foods.html', context=context)
 
@@ -170,6 +175,15 @@ def add_food(request, food_query_string):
 			setattr(new_food, field_name, food[field]['qty'])
 
 	new_food.save()
+
+	return redirect('saved-foods')
+
+@login_required
+def delete_saved_food(request, food_name):
+	"""
+	Removes a given saved food.
+	"""
+	SavedFood.objects.filter(name=food_name).delete()
 
 	return redirect('saved-foods')
 
@@ -224,6 +238,9 @@ def food_search(request):
 	context['form'] = form
 
 	return render(request, 'food_search.html', context=context)
+
+
+
 
 ### API endpoint interface (v2/search/instant) 
 def food_lookup(query, common, branded) -> list:
