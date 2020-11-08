@@ -1,18 +1,51 @@
 {% extends "base.html" %}
 
+{% load saved_foods_tags %}
+
 {% block title %}{{ block.super }} - Saved Foods{% endblock %}
 
 {% block content %}
 
-	<h3>Saved Foods: <a class="btn btn-primary" role="button" href="{% url 'food-search' %}">+</a></h3>
+	<h3>Saved Foods: <a class="btn btn-primary btn-sm" role="button" href="{% url 'food-search' %}">+</a></h3>
 	{% if saved_foods %}
 		<p>Why is this showing up?</p>
 		{% for food in saved_foods %}
 			<ul style="list-style-type:none;">
 				<li>
-					<p>{{ food }}</p>
+					<p>
+						{{ food }} 
+						<a class="btn btn-danger btn-sm" role="button" href="{% url 'delete-food' food.name %}"><small>Delete</small></a>
+					</p>
 					<small style="padding-left:10px">
-						{{ food.calories }} cal | {{ food.total_fat }}g fat | {{ food.total_carbs }}g carbs | {{ food.total_protein }}g protein
+
+						{{ food.calories }} cal | {{ food.total_fat }}g fat | {{ food.total_carbs }}g carbs | {{ food.total_protein }}g protein | |
+						<!-- Button trigger modal -->
+						<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalLong">
+						<small>See more nutrients</small>
+						</button>
+						<!-- Modal -->
+						<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLongTitle">Hidden Nutrients</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+									{% for nutrient in food.fields %}
+										{% if nutrient.name not in display_exclusion %}
+											<p>{{ nutrient.name|underscores_begone|title }}: {{ nutrient|value_from_model_field:food  }}{{ nutrient.help_text }}</p>
+										{% endif %}
+									{% endfor %}
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									</div>
+								</div>
+							</div>
+						</div>
 					</small>
 				</li>
 			</ul>
@@ -21,7 +54,7 @@
 		<p>You have no saved foods yet...</p>
 	{% endif %}
 
-	<h3>Custom Food Groups: <a class="btn btn-primary" role="button" href="" style="color:lightblue;">+</a></h3>
+	<h3>Custom Food Groups: <a class="btn btn-primary btn-sm" role="button" href="" style="color:lightblue;">+</a></h3>
 	{% if food_groups %}
 		{% for group in food_groups %}
 			<ul style="list-style-type:none;">
