@@ -4,8 +4,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 import requests
+import urllib
 
 from .forms import CreateUserForm, AddSavedFoodForm
+from .models import SavedFood
 
 # {attr_id: {name: ***, unit: ***}}
 NUTRITIONIX_USDA_NUTRIENT_MAPPING = {
@@ -28,7 +30,7 @@ NUTRITIONIX_USDA_NUTRIENT_MAPPING = {
 	'324': {'name': 'vitamin d', 'unit': 'IU'},
 	'221': {'name': 'alcohol', 'unit': 'g'},
 	'262': {'name': 'caffeine', 'unit': 'mg'},
-	'322': {'name': 'crotene a', 'unit': 'Âµg'},
+	'322': {'name': 'carotene a', 'unit': 'Âµg'},
 	'321': {'name': 'carotene b', 'unit': 'Âµg'},
 	'421': {'name': 'choline', 'unit': 'mg'},
 	'417': {'name': 'folate', 'unit': 'Âµg'},
@@ -39,6 +41,62 @@ NUTRITIONIX_USDA_NUTRIENT_MAPPING = {
 	'317': {'name': 'selenium', 'unit': 'Âµg'},
 	'309': {'name': 'folate', 'unit': 'Âµg'},
 	'417': {'name': 'zinc', 'unit': 'mg'},
+	'513': {'name': 'alanine', 'unit': 'g'},
+	'511': {'name': 'arginine', 'unit': 'mg'},
+	'514': {'name': 'aspartic acid', 'unit': 'g'},
+	'454': {'name': 'betaine', 'unit': 'mg'},
+	'326': {'name': 'vitamin d3', 'unit': 'Âµg'},
+	'417': {'name': 'zinc', 'unit': 'mg'},
+	'207': {'name': 'ash', 'unit': 'g'},
+	'312': {'name': 'copper', 'unit': 'mg'},
+	'325': {'name': 'vitamin d2', 'unit': 'Âµg'},
+	'507': {'name': 'cystine', 'unit': 'g'},
+	'851': {'name': 'omega-3 (ALA)', 'unit': 'g'},
+	'629': {'name': 'omega-3 (EPA)', 'unit': 'g'},
+	'631': {'name': 'omega-3 (DPA)', 'unit': 'g'},
+	'621': {'name': 'omega-3 (DHA)', 'unit': 'g'},
+	'852': {'name': 'omega-3 (ETE)', 'unit': 'g'},
+	'675': {'name': 'omega-6 (LA)', 'unit': 'g'},
+	'685': {'name': 'omega-6 (GLA)', 'unit': 'g'},
+	'672': {'name': 'omega-6 (EA)', 'unit': 'g'},
+	'853': {'name': 'omega-6 (DGLA)', 'unit': 'g'},
+	'855': {'name': 'omega-6 (AA)', 'unit': 'g'},
+	'313': {'name': 'fluoride', 'unit': 'Âµg'},
+	'212': {'name': 'fructose', 'unit': 'g'},
+	'287': {'name': 'galactose', 'unit': 'g'},
+	'515': {'name': 'glutamic acid', 'unit': 'g'},
+	'211': {'name': 'dextrose', 'unit': 'g'},
+	'516': {'name': 'glycine', 'unit': 'g'},
+	'512': {'name': 'histidine', 'unit': 'g'},
+	'521': {'name': 'hydroxyproline', 'unit': 'g'},
+	'503': {'name': 'isoleucine', 'unit': 'g'},
+	'213': {'name': 'lactose', 'unit': 'g'},
+	'504': {'name': 'leucine', 'unit': 'g'},
+	'337': {'name': 'lycopine', 'unit': 'Âµg'},
+	'505': {'name': 'lysine', 'unit': 'g'},
+	'214': {'name': 'maltose', 'unit': 'g'},
+	'506': {'name': 'methionine', 'unit': 'g'},
+	'406': {'name': 'niacin', 'unit': 'mg'},
+	'428': {'name': 'menaquinone-4', 'unit': 'g'},
+	'410': {'name': 'pantothenic acid', 'unit': 'mg'},
+	'508': {'name': 'phenylalanine', 'unit': 'g'},
+	'636': {'name': 'phytosterols', 'unit': 'mg'},
+	'517': {'name': 'proline', 'unit': 'g'},
+	'319': {'name': 'retinol', 'unit': 'Âµg'},
+	'405': {'name': 'riboflavin', 'unit': 'mg'},
+	'518': {'name': 'serine', 'unit': 'mg'},
+	'209': {'name': 'starch', 'unit': 'g'},
+	'210': {'name': 'sucrose', 'unit': 'g'},
+	'406': {'name': 'theobromine', 'unit': 'mg'},
+	'404': {'name': 'thiamin', 'unit': 'mg'},
+	'502': {'name': 'threonine', 'unit': 'g'},
+	'323': {'name': 'vitamin e', 'unit': 'mg'},
+	'501': {'name': 'tryptophan', 'unit': 'g'},
+	'418': {'name': 'vitamin b12', 'unit': 'Âµg'},
+	'415': {'name': 'vitamin b6', 'unit': 'mg'},
+	'401': {'name': 'vitamin c', 'unit': 'mg'},
+	'430': {'name': 'vitamin k', 'unit': 'Âµg'},
+	'255': {'name': 'water', 'unit': 'g'},
 }
 
 def home(request):
@@ -73,10 +131,27 @@ def saved_foods(request):
 	return render(request, 'saved_foods.html', context=context)
 
 @login_required
-def add_saved_food(request):
+def add_food(request, food_query_string):
+	"""
+	Takes an encoded food information query string and creates a SavedFood 
+		instance associated with the currently logged in user.
+	"""
+	# Decodes food nutrition information into dict from url parameter
+	food = urllib.parse.parse_qs(food_query_string)
+	"""
+	saved_food = SavedFood.objects.create(
+		name=food['name']['string']
+	)
+	"""
+	
+
+	return redirect('saved-foods')
+
+@login_required
+def food_search(request):
 	"""
 	Uses a search form to allow the user to choose a result to add to their
-		SavedFoods model.
+		SavedFood model.
 	"""
 	context = {}
 
@@ -89,17 +164,20 @@ def add_saved_food(request):
 				search_type['common'] = False
 			elif form.cleaned_data['food_type'] == '2':
 				search_type['branded'] = False
+
 			results = food_lookup(
 				query=form.cleaned_data['query'], 
 				common=search_type['common'], 
 				branded=search_type['branded']
 			)
+
 			context['results'] = results
 			context['display_exclusion'] = [
 				"protein", "carbohydrate", "fiber", "sugar", "a_sugar", "fat", 
 				"saturated", "monounsaturated", "polyunsaturated", "image", 
-				"serving", "weight", "brand", "energy", 'sodium'
+				"serving", "weight", "brand", "energy", 'sodium', 'encoded', 'name'
 			]
+
 			# For search result shortcuts in sidebar
 			shortcut_ids = {}
 			for food in results:
@@ -110,8 +188,10 @@ def add_saved_food(request):
 					brand = 'USDA C.F.'
 				display_text = f'{food} | {brand}'
 				shortcut_ids[food] = display_text
-				
+
 			context['shortcut_ids'] = shortcut_ids
+
+
 	else:
 		form = AddSavedFoodForm()
 
@@ -155,6 +235,7 @@ def food_lookup(query, common, branded) -> list:
 		for item in food_list:
 			# The search results description to be displayed for the client
 			description = {
+				'name': {'string': item['food_name']},
 				'serving': {'qty': item['serving_qty'], 'unit': item['serving_unit']},
 				'weight': {'qty': item['serving_weight_grams'], 'units': 'g'},
 				'image': {'url': item['photo']['thumb']},
@@ -178,6 +259,10 @@ def food_lookup(query, common, branded) -> list:
 					}
 				except KeyError:
 					pass
+			# Encoded data for passing to a URL about the food item
+			encoded = urllib.parse.urlencode(description)
+			description['encoded'] = {'query_string': encoded}
+
 			results[item['food_name']] = description
 
 		return results
