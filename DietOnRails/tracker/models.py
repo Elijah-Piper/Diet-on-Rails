@@ -12,6 +12,7 @@ class SavedFood(models.Model):
 
 	name = models.CharField(max_length=60)
 	brand_name = models.CharField(max_length=60, null=True)
+	image_url = models.URLField(null=True)
 
 	# Serving info
 	serving_qty = models.IntegerField()
