@@ -11,7 +11,7 @@ class SavedFood(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved_foods')
 
 	name = models.CharField(max_length=60)
-	brand_name = models.CharField(max_length=60, null=True)
+	brand = models.CharField(max_length=60, null=True)
 	image_url = models.URLField(null=True)
 
 	# Serving info
