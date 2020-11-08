@@ -14,14 +14,14 @@
 				<li>
 					<p>
 						{{ food }} 
-						<a class="btn btn-danger btn-sm" role="button" href="{% url 'delete-food' food.name %}"><small>Delete</small></a>
+						<a class="btn btn-sm btn-link" role="button" href="{% url 'delete-food' food.name %}">Delete</a>
 					</p>
 					<small style="padding-left:10px">
 
-						{{ food.calories }} cal | {{ food.total_fat }}g fat | {{ food.total_carbs }}g carbs | {{ food.total_protein }}g protein | |
+						{{ food.calories }} cal | {{ food.total_fat }}g fat | {{ food.total_carbs }}g carbs | {{ food.total_protein }}g protein
 						<!-- Button trigger modal -->
-						<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalLong">
-						<small>See more nutrients</small>
+						<button type="button" class="btn btn-primary btn-sm btn-link" data-toggle="modal" data-target="#exampleModalLong">
+							See more nutrients
 						</button>
 						<!-- Modal -->
 						<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">

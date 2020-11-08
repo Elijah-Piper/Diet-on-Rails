@@ -118,6 +118,11 @@ class SavedFood(models.Model):
 	class Meta:
 		ordering = ['name']
 
+	@property
+	def fields(self):
+		return self._meta.fields
+	
+	
 	def __str__(self):
 		if self.brand:
 			return f'{self.name} - {self.brand}'
