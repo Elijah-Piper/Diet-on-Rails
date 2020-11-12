@@ -36,3 +36,11 @@ class AddSavedFoodForm(forms.Form):
 		choices=[('1', 'Brand Name Only'), ('2', 'USDA Common Foods Only'), ('0', 'Both')],
 		required=False
 	)
+
+
+class AddFoodGroupForm(forms.Form):
+	"""
+	Creates a FoodGroup model instance comprised of the selected FoodGroups
+		and SavedFoods for the given user.
+	"""
+	

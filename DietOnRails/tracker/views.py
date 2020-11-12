@@ -188,6 +188,19 @@ def delete_saved_food(request, food_name):
 	return redirect('saved-foods')
 
 @login_required
+def add_group(request):
+	"""
+	Processes a form in which a user specifies the contents of a new custom food
+		food group to be saved to their account.
+	"""
+	if request.method == "POST":
+		form = AddFoodGroupForm(request.POST)
+	else:
+		form = 
+
+
+
+@login_required
 def food_search(request):
 	"""
 	Uses a search form to allow the user to choose a result to add to their
