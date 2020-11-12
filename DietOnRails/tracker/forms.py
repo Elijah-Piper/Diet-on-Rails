@@ -33,6 +33,6 @@ class AddSavedFoodForm(forms.Form):
 	food_type = forms.ChoiceField(
 		label='Food type',
 		widget=forms.RadioSelect(),
-		choices=[('1', 'Brand Name Only'), ('2', 'USDA Common Foods Only')],
+		choices=[('1', 'Brand Name Only'), ('2', 'USDA Common Foods Only'), ('0', 'Both')],
 		required=False
 	)
