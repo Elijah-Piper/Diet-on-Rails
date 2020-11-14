@@ -36,7 +36,9 @@
 									<div class="modal-body">
 									{% for nutrient in food.fields %}
 										{% if nutrient.name not in display_exclusion %}
-											<p>{{ nutrient.name|underscores_begone|title }}: {{ nutrient|value_from_model_field:food  }}{{ nutrient.help_text }}</p>
+											{% if nutrient|value_from_model_field:food %}
+												<p>{{ nutrient.name|underscores_begone|title }}: {{ nutrient|value_from_model_field:food  }}{{ nutrient.help_text }}</p>
+											{% endif %}
 										{% endif %}
 									{% endfor %}
 									</div>
@@ -54,14 +56,47 @@
 		<p>You have no saved foods yet...</p>
 	{% endif %}
 
-	<h3>Custom Food Groups: <a class="btn btn-primary btn-sm" role="button" href="" style="color:lightblue;">+</a></h3>
+	<h3>Custom Food Groups: <a class="btn btn-primary btn-sm" role="button" href="{% url 'add-food-group' %}" style="color:lightblue;">+</a></h3>
 	{% if food_groups %}
 		{% for group in food_groups %}
 			<ul style="list-style-type:none;">
 				<li>
-					<p>{{ group }}</p>
+					<p>
+						{{ group }}
+						<a class="btn btn-sm btn-link" role="button" href="{% url 'delete-group' group.name %}">Delete</a>
+					</p>
 					<small style="padding-left:10px">
-						{{ group.calories }} cal | {{ group.total_fat }}g fat | {{ group.total_carbs }}g carbs | {{ group.protein }}g protein }}
+
+						{{ group.calories }} cal | {{ group.total_fat }}g fat | {{ group.total_carbs }}g carbs | {{ group.total_protein }}g protein
+						<!-- Button trigger modal -->
+						<button type="button" class="btn btn-primary btn-sm btn-link" data-toggle="modal" data-target="#exampleModalLong">
+							See more nutrients
+						</button>
+						<!-- Modal -->
+						<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLongTitle">Hidden Nutrients</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+									{% for nutrient in group.fields %}
+										{% if nutrient.name not in display_exclusion %}
+											{% if nutrient|value_from_model_field:group %}
+												<p>{{ nutrient.name|underscores_begone|title }}: {{ nutrient|value_from_model_field:group  }}{{ nutrient.help_text }}</p>
+											{% endif %}
+										{% endif %}
+									{% endfor %}
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									</div>
+								</div>
+							</div>
+						</div>
 					</small>
 				</li>
 			</ul>

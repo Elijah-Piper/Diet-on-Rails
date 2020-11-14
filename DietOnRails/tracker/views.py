@@ -7,8 +7,8 @@ import ast
 import requests
 import urllib
 
-from .forms import CreateUserForm, AddSavedFoodForm
-from .models import SavedFood
+from .forms import AddSavedFoodForm, CreateUserForm, AddFoodGroupForm
+from .models import SavedFood, FoodGroup
 
 # {attr_id: {name: ***, unit: ***}}
 # If 'model_name' is False, the nutrient model field name is the same as 'name'
@@ -188,17 +188,75 @@ def delete_saved_food(request, food_name):
 	return redirect('saved-foods')
 
 @login_required
-def add_group(request):
+def add_food_group(request):
 	"""
 	Processes a form in which a user specifies the contents of a new custom food
 		food group to be saved to their account.
 	"""
+	context = {}
+
 	if request.method == "POST":
-		form = AddFoodGroupForm(request.POST)
+		form = AddFoodGroupForm(request.POST, user=request.user)
+		# Creates and saves a new instance of FoodGroup
+		if form.is_valid():
+			data = form.cleaned_data
+			# {pk: number of servings}
+			foods = {}
+			for field in data:
+				if field != 'name':
+					if data[field] > 0:
+						foods[int(field[8:])] = data[field]
+
+			new_group = FoodGroup(
+				user=request.user,
+				name=data['name'],
+			)
+
+			nutrients = {}
+			fields_to_ignore = (
+				'user', 'name', 'brand', 'image_url', 'serving_qty', 
+				'serving_unit', 'grouped_foods', 'grouped_groups', 'id'
+			)
+			for pk in foods:
+				food = SavedFood.objects.filter(pk=pk)[0]
+				servings_multiplier = foods[pk]
+				fields = food._meta.fields
+				for field in fields:
+					if field.name not in fields_to_ignore:
+						if field in nutrients.keys():
+							value = getattr(food, field.name)
+							if value == None:
+								value = 0
+							total = value * servings_multiplier
+							nutrients[field.name] += round(total, 3)
+						else:
+							value = getattr(food, field.name)
+							if value == None:
+								value = 0
+							total = value * servings_multiplier
+							nutrients[field.name] = round(total, 3)
+			for nutrient in nutrients:
+				setattr(new_group, nutrient, nutrients[nutrient])
+
+			new_group.save()
+
+			return redirect('saved-foods')
 	else:
-		form = 
+		form = AddFoodGroupForm(user=request.user)
 
+	print(form.fields)
 
+	context['form'] = form
+
+	return render(request, "add_food_group.html", context=context)
+
+def delete_food_group(request, group_name):
+	"""
+	Deletes the designated FoodGroup instance.
+	"""
+	FoodGroup.objects.filter(name=group_name, user=request.user).delete()
+
+	return redirect('saved-foods')
 
 @login_required
 def food_search(request):

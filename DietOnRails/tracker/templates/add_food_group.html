@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }} - Add Food Group{% endblock %}
+
+{% block content %}
+	<h2>Create a new custom food group:</h2>
+	<form method="POST">
+		{% csrf_token %}
+		{% if form.fields %}
+			<p>{{ form.name.label_tag|title }}{{form.name}}</p>
+			{% for field in form %}
+				{% if field.label != "name" %}
+					<p>{{ field }} {{ field.label }}</p>
+				{% endif %}
+			{% endfor %}
+			<input class="btn btn-primary btn-sm" type="submit" value="Create">
+		{% else %}
+			<p>You have no saved foods.</p>
+		{% endif %}
+	</form>
+{% endblock %}

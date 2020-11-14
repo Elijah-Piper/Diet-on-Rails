@@ -243,7 +243,7 @@ class FoodGroup(models.Model):
 	water = models.FloatField(help_text="g", blank=True, null=True)
 
 	def __str__(self):
-		return name
+		return self.name
 
 
 class FoodLog(FoodGroup):

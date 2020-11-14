@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User 
 
+from .models import FoodGroup, SavedFood
+
 
 class CreateUserForm(UserCreationForm):
 	first_name = forms.CharField(max_length=30, required=False, help_text='Optional')
@@ -40,7 +42,33 @@ class AddSavedFoodForm(forms.Form):
 
 class AddFoodGroupForm(forms.Form):
 	"""
-	Creates a FoodGroup model instance comprised of the selected FoodGroups
-		and SavedFoods for the given user.
+	Determines the saved food items/groups and the number of servings of each to
+		use in the new food group.
 	"""
-	
+	name = forms.CharField(
+		max_length=60,
+		required=True,
+		label='name'
+	)
+
+	def __init__(self, *args, **kwargs):
+		user = kwargs.pop('user', None)
+		super(AddFoodGroupForm, self).__init__(*args, **kwargs)
+
+		# Dynamically creates a field for each food or group the user has
+		for food in user.saved_foods.all():
+			self.fields[f'serving_{food.pk}'] = forms.FloatField(
+				required=True,
+				min_value=0,
+				label=f'{food.serving_unit} | {food}',
+				initial=0,
+				widget=forms.NumberInput(attrs={'style': 'width:4em;'})
+			)
+		for group in user.grouped_foods.all():
+			self.fields[f'serving_{group.pk}'] = forms.FloatField(
+				required=True,
+				min_value=0,
+				label=f'serving(s) | {group}',
+				initial=0,
+				widget=forms.NumberInput(attrs={'style': 'width:4em;'})
+			)
